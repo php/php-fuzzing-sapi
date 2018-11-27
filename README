@@ -1,0 +1,17 @@
+fuzzing SAPI for PHP
+
+Installation
+
+For installation put this code into a directory sapi/fuzz inside a PHP
+source tree, then run `./buildconf` and `./configure` PHP using the
+--enable-fuzz switch.
+
+You need llvm/clang's libFuzzing to be around.
+
+When running `make` ithhis creates thee binaries in `sapi/pconn/`:
+* php-fuzz-parser
+* php-fuzz-unserialize
+* php-fuzz-json
+
+Which use libfuzzing on the language prser, the unserialize parser
+and the json parser.
