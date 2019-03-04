@@ -11,14 +11,23 @@ if test "$PHP_FUZZER" != "no"; then
   PHP_ADD_MAKEFILE_FRAGMENT($abs_srcdir/sapi/fuzzer/Makefile.frag)
   SAPI_FUZZER_PATH=sapi/fuzzer
   PHP_SUBST(SAPI_FUZZER_PATH)
-  AX_CHECK_COMPILE_FLAG([-fsanitize-coverage=edge -fsanitize=address], [
+  if -z "$LIB_FUZZING_ENGINE"; then
+    FUZZING_LIB="-lFuzzer"
+    FUZZING_CC="$CC"
+    AX_CHECK_COMPILE_FLAG([-fsanitize-coverage=edge -fsanitize=address], [
       CFLAGS="$CFLAGS -fsanitize-coverage=edge -fsanitize=address"
       CXXFLAGS="$CXXFLAGS -fsanitize-coverage=edge -fsanitize=address"
       LDFLAGS="$LDFLAGS -fsanitize-coverage=edge -fsanitize=address"
-  ],[
+    ],[
       AC_MSG_ERROR(compiler doesn't support -fsanitize flags)
-  ])
-
+    ])
+  else
+    FUZZING_LIB="-lFuzzingEngine"
+    FUZZING_CC="$CXX"
+  fi
+  PHP_SUBST(FUZZING_LIB)
+  PHP_SUBST(FUZZING_CC)
+  
   dnl PHP_SELECT_SAPI(fuzzer-parser, program, $FUZZER_SOURCES, , '$(SAPI_FUZZER_PATH)')
 
   PHP_ADD_BUILD_DIR([sapi/fuzzer])
