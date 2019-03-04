@@ -4,7 +4,7 @@ Installation
 
 For installation put this code into a directory sapi/fuzzer inside a PHP
 source tree, then run `./buildconf` and `./configure` PHP using the
---enable-fuzz switch.
+--enable-fuzzer switch.
 
 You need llvm/clang's libFuzzer to be around.
 
