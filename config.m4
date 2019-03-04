@@ -11,7 +11,7 @@ if test "$PHP_FUZZER" != "no"; then
   PHP_ADD_MAKEFILE_FRAGMENT($abs_srcdir/sapi/fuzzer/Makefile.frag)
   SAPI_FUZZER_PATH=sapi/fuzzer
   PHP_SUBST(SAPI_FUZZER_PATH)
-  if -z "$LIB_FUZZING_ENGINE"; then
+  if test -z "$LIB_FUZZING_ENGINE"; then
     FUZZING_LIB="-lFuzzer"
     FUZZING_CC="$CC"
     AX_CHECK_COMPILE_FLAG([-fsanitize-coverage=edge -fsanitize=address], [
