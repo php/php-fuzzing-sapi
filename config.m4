@@ -23,7 +23,7 @@ if test "$PHP_FUZZER" != "no"; then
     ])
   else
     FUZZING_LIB="-lFuzzingEngine"
-    FUZZING_CC="$CXX"
+    FUZZING_CC="$CXX -stdlib=libc++"
   fi
   PHP_SUBST(FUZZING_LIB)
   PHP_SUBST(FUZZING_CC)
