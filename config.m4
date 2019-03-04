@@ -42,7 +42,11 @@ if test "$PHP_FUZZER" != "no"; then
   PHP_SUBST(PHP_FUZZER_UNSERIALIZE_OBJS)
   PHP_ADD_SOURCES_X([sapi/fuzzer],[fuzzer-unserialize.c fuzzer-sapi.c],[],PHP_FUZZER_UNSERIALIZE_OBJS)
 
-  dnl This check doesn't work, as PHP_ARG_ENABLE(json) comes later ... 
+  PHP_FUZZER_BINARIES="$PHP_FUZZER_BINARIES $SAPI_FUZZER_PATH/php-fuzz-exif"
+  PHP_SUBST(PHP_FUZZER_EXIF_OBJS)
+  PHP_ADD_SOURCES_X([sapi/fuzzer],[fuzzer-exif.c fuzzer-sapi.c],[],PHP_FUZZER_EXIF_OBJS)
+
+  dnl This check doesn't work, as PHP_ARG_ENABLE(json) comes later ...
   if test "$PHP_JSON" != "no"; then
     PHP_FUZZER_BINARIES="$PHP_FUZZER_BINARIES $SAPI_FUZZER_PATH/php-fuzz-json"
     PHP_SUBST(PHP_FUZZER_JSON_OBJS)
