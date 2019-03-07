@@ -6,6 +6,15 @@ PHP_ARG_ENABLE(fuzzer,,
 dnl For newer clang versions see https://llvm.org/docs/LibFuzzer.html#fuzzer-usage
 dnl for relevant flags. 
 
+dnl Macro to define fuzzing target
+dnl FUZZER_TARGET(name, target-var)
+dnl
+AC_DEFUN([FUZZER_TARGET], [
+  PHP_FUZZER_BINARIES="$PHP_FUZZER_BINARIES $SAPI_FUZZER_PATH/php-fuzz-$1"
+  PHP_SUBST($2)
+  PHP_ADD_SOURCES_X([sapi/fuzzer],[fuzzer-$1.c fuzzer-sapi.c],[],$2)
+])
+
 if test "$PHP_FUZZER" != "no"; then
   PHP_REQUIRE_CXX()
   PHP_ADD_MAKEFILE_FRAGMENT($abs_srcdir/sapi/fuzzer/Makefile.frag)
@@ -32,25 +41,16 @@ if test "$PHP_FUZZER" != "no"; then
 
   PHP_ADD_BUILD_DIR([sapi/fuzzer])
   PHP_BINARIES="$PHP_BINARIES fuzzer"
+  PHP_FUZZER_BINARIES=""
   PHP_INSTALLED_SAPIS="$PHP_INSTALLED_SAPIS fuzzer"
 
-  PHP_FUZZER_BINARIES="$SAPI_FUZZER_PATH/php-fuzz-parser"
-  PHP_SUBST(PHP_FUZZER_PARSER_OBJS)
-  PHP_ADD_SOURCES_X([sapi/fuzzer],[fuzzer-parser.c fuzzer-sapi.c],[],PHP_FUZZER_PARSER_OBJS)
+  FUZZER_TARGET([parser], PHP_FUZZER_PARSER_OBJS)
+  FUZZER_TARGET([unserialize], PHP_FUZZER_UNSERIALIZE_OBJS)
+  FUZZER_TARGET([exif], PHP_FUZZER_EXIF_OBJS)
   
-  PHP_FUZZER_BINARIES="$PHP_FUZZER_BINARIES $SAPI_FUZZER_PATH/php-fuzz-unserialize"
-  PHP_SUBST(PHP_FUZZER_UNSERIALIZE_OBJS)
-  PHP_ADD_SOURCES_X([sapi/fuzzer],[fuzzer-unserialize.c fuzzer-sapi.c],[],PHP_FUZZER_UNSERIALIZE_OBJS)
-
-  PHP_FUZZER_BINARIES="$PHP_FUZZER_BINARIES $SAPI_FUZZER_PATH/php-fuzz-exif"
-  PHP_SUBST(PHP_FUZZER_EXIF_OBJS)
-  PHP_ADD_SOURCES_X([sapi/fuzzer],[fuzzer-exif.c fuzzer-sapi.c],[],PHP_FUZZER_EXIF_OBJS)
-
   dnl This check doesn't work, as PHP_ARG_ENABLE(json) comes later ...
   if test "$PHP_JSON" != "no"; then
-    PHP_FUZZER_BINARIES="$PHP_FUZZER_BINARIES $SAPI_FUZZER_PATH/php-fuzz-json"
-    PHP_SUBST(PHP_FUZZER_JSON_OBJS)
-    PHP_ADD_SOURCES_X([sapi/fuzzer],[fuzzer-json.c fuzzer-sapi.c],[],PHP_FUZZER_JSON_OBJS)
+    FUZZER_TARGET([json], PHP_FUZZER_JSON_OBJS)
   fi
 
   PHP_SUBST(PHP_FUZZER_BINARIES)
