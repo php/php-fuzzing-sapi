@@ -108,6 +108,8 @@ int fuzzer_init_php()
 	fuzzer_module.ini_entries = malloc(sizeof(HARDCODED_INI));
 	memcpy(fuzzer_module.ini_entries, HARDCODED_INI, sizeof(HARDCODED_INI));
 
+	putenv("USE_ZEND_ALLOC=0");
+
 	if (fuzzer_module.startup(&fuzzer_module)==FAILURE) {
 		return FAILURE;
 	}
