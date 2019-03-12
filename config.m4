@@ -49,10 +49,10 @@ if test "$PHP_FUZZER" != "no"; then
   FUZZER_TARGET([exif], PHP_FUZZER_EXIF_OBJS)
 
   dnl This check doesn't work, as PHP_ARG_ENABLE(json) comes later ...
-  if test "$PHP_JSON" != "no"; then
+  if test "x$enable_json" != "xno"; then
     FUZZER_TARGET([json], PHP_FUZZER_JSON_OBJS)
   fi
-  if test "$PHP_MBSTRING" != "no"; then
+  if test "x$enable_mbstring" = "xyes"; then
     FUZZER_TARGET([mbstring], PHP_FUZZER_MBSTRING_OBJS)
   fi
 
