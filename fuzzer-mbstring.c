@@ -16,38 +16,48 @@
 #include "Zend/zend.h"
 #include "main/php_config.h"
 #include "main/php_main.h"
-#include "ext/standard/php_var.h"
 
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 
 #include "fuzzer-sapi.h"
 
 int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
-	char *filename;
-	int filedes;
+#ifdef HAVE_MBREGEX
+	char *args[2];
+	char *data = malloc(Size+1);
+	memcpy(data, Data, Size);
+	data[Size] = '\0';
 
 	if (php_request_startup()==FAILURE) {
 		php_module_shutdown();
 		return 0;
 	}
 
-	/* put the data in a file */
-	filename = tmpnam(NULL);
-	filedes = open(filename, O_CREAT|O_RDWR);
-	write(filedes, Data, Size);
-	close(filedes);
+	args[0] = data;
+	args[1] = "test123";
+	fuzzer_call_php_func("mb_ereg", 2, args);
 
-	fuzzer_call_php_func("exif_read_data", 1, &filename);
+	args[0] = data;
+	args[1] = "test123";
+	fuzzer_call_php_func("mb_eregi", 2, args);
 
-	/* cleanup */
-	unlink(filename);
+	args[0] = data;
+	args[1] = data;
+	fuzzer_call_php_func("mb_ereg", 2, args);
+
+	args[0] = data;
+	args[1] = data;
+	fuzzer_call_php_func("mb_eregi", 2, args);
+
 	php_request_shutdown(NULL);
 
+	free(data);
+#else
+	fprintf(stderr, "\n\nERROR:\nPHP built without mbstring, recompile with --enable-mbstring to use this fuzzer\n");
+	exit(1);
+#endif
 	return 0;
 }
 

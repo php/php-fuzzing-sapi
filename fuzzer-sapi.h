@@ -12,3 +12,5 @@
 */
 
 int fuzzer_init_php();
+void fuzzer_call_php_func(const char *func_name, int nargs, char **params);
+void fuzzer_call_php_func_zval(const char *func_name, int nargs, zval *args);

@@ -1,6 +1,7 @@
 /*
   +----------------------------------------------------------------------+
   | Copyright (c) 2017, Johannes Schlüter <johannes@schlueters.de>       |
+  | Copyright (c) 2019, Stanislav Malyshev <stas@php.net>                |
   | All rights reserved.                                                 |
   +----------------------------------------------------------------------+
   | Redistribution and use in source and binary forms, with or without   |
@@ -108,7 +109,16 @@ int fuzzer_init_php()
 	fuzzer_module.ini_entries = malloc(sizeof(HARDCODED_INI));
 	memcpy(fuzzer_module.ini_entries, HARDCODED_INI, sizeof(HARDCODED_INI));
 
+	/*
+	 * TODO: we might want to test both Zend and malloc MM, but testing with malloc
+	 * is more likely to find bugs, so use that for now.
+	 */
 	putenv("USE_ZEND_ALLOC=0");
+
+#ifdef __SANITIZE_ADDRESS__
+	/* Not very interested in memory leak detection, since Zend MM does that */
+	__lsan_disable();
+#endif
 
 	if (fuzzer_module.startup(&fuzzer_module)==FAILURE) {
 		return FAILURE;
@@ -193,6 +203,51 @@ int fuzzer_do_request_d(char *filename, char *data, size_t data_len)
 	file_handle.type = ZEND_HANDLE_MAPPED;
 
 	return fuzzer_do_request(&file_handle, filename);
+}
+
+// Call named PHP function with N zval arguments
+void fuzzer_call_php_func_zval(const char *func_name, int nargs, zval *args) {
+	zend_fcall_info fci = {0};
+	zend_fcall_info_cache fci_cache = {0};
+	zval retval, func;
+	int result;
+
+	ZVAL_STRING(&func, func_name);
+	ZVAL_UNDEF(&retval);
+	zend_fcall_info_init(&func, 0, &fci, &fci_cache, NULL, NULL);
+
+	fci.retval = &retval;
+	fci.param_count = nargs;
+	fci.params = args;
+	fci.no_separation = 0;
+
+	result = zend_call_function(&fci, &fci_cache);
+	// TODO: check result?
+	/* to ensure retval is not broken */
+	php_var_dump(&retval, 0);
+
+	/* cleanup */
+	zval_ptr_dtor(&retval);
+	ZVAL_UNDEF(&retval);
+	zval_ptr_dtor(&func);
+	ZVAL_UNDEF(&func);
+}
+
+// Call named PHP function with N string arguments
+void fuzzer_call_php_func(const char *func_name, int nargs, char **params) {
+	zval args[nargs];
+	int i;
+
+	for(i=0;i<nargs;i++) {
+		ZVAL_STRING(&args[i], params[i]);
+	}
+
+	fuzzer_call_php_func_zval(func_name, nargs, args);
+
+	for(i=0;i<nargs;i++) {
+		zval_ptr_dtor(&args[i]);
+		ZVAL_UNDEF(&args[i]);
+	}
 }
 
 /*
