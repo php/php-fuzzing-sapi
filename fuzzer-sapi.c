@@ -207,21 +207,13 @@ int fuzzer_do_request_d(char *filename, char *data, size_t data_len)
 
 // Call named PHP function with N zval arguments
 void fuzzer_call_php_func_zval(const char *func_name, int nargs, zval *args) {
-	zend_fcall_info fci = {0};
-	zend_fcall_info_cache fci_cache = {0};
 	zval retval, func;
 	int result;
 
 	ZVAL_STRING(&func, func_name);
 	ZVAL_UNDEF(&retval);
-	zend_fcall_info_init(&func, 0, &fci, &fci_cache, NULL, NULL);
+	result = call_user_function(CG(function_table), NULL, &func, &retval, nargs, args);
 
-	fci.retval = &retval;
-	fci.param_count = nargs;
-	fci.params = args;
-	fci.no_separation = 0;
-
-	result = zend_call_function(&fci, &fci_cache);
 	// TODO: check result?
 	/* to ensure retval is not broken */
 	php_var_dump(&retval, 0);
