@@ -13,3 +13,4 @@ When running `make` ithhis creates these binaries in `sapi/fuzzer/`:
 * php-fuzz-unserialize - fuzzing unserialize() function
 * php-fuzz-json - fussing JSON parser
 * php-fuzz-exif - fuzzing exif_read_data() function (use --enable-exif)
+* php-fuzz-mbstring - fuzzing mb_ereg[i] (requires --enable-mbstring)
