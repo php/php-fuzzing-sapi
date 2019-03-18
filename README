@@ -8,7 +8,7 @@ source tree, then run `./buildconf` and `./configure` PHP using the
 
 You need llvm/clang's libFuzzer to be around.
 
-When running `make` ithhis creates these binaries in `sapi/fuzzer/`:
+When running `make` it creates these binaries in `sapi/fuzzer/`:
 * php-fuzz-parser - fuzzing language parser
 * php-fuzz-unserialize - fuzzing unserialize() function
 * php-fuzz-json - fussing JSON parser
