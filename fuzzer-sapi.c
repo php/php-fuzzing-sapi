@@ -1,16 +1,21 @@
 /*
-  +----------------------------------------------------------------------+
-  | Copyright (c) 2017, Johannes Schlüter <johannes@schlueters.de>       |
-  | Copyright (c) 2019, Stanislav Malyshev <stas@php.net>                |
-  | All rights reserved.                                                 |
-  +----------------------------------------------------------------------+
-  | Redistribution and use in source and binary forms, with or without   |
-  | modification, are permitted provided that the conditions which are   |
-  | bundled with this package in the file LICENSE.                       |
-  | This product includes PHP software, freely available from            |
-  | <http://www.php.net/software/>                                       |
-  +----------------------------------------------------------------------+
-*/
+   +----------------------------------------------------------------------+
+   | PHP Version 7                                                        |
+   +----------------------------------------------------------------------+
+   | Copyright (c) The PHP Group                                          |
+   +----------------------------------------------------------------------+
+   | This source file is subject to version 3.01 of the PHP license,      |
+   | that is bundled with this package in the file LICENSE, and is        |
+   | available through the world-wide-web at the following url:           |
+   | http://www.php.net/license/3_01.txt                                  |
+   | If you did not receive a copy of the PHP license and are unable to   |
+   | obtain it through the world-wide-web, please send a note to          |
+   | license@php.net so we can mail you a copy immediately.               |
+   +----------------------------------------------------------------------+
+   | Authors: Johannes Schlüter <johanes@php.net>                         |
+   |          Stanislav Malyshev <stas@php.net>                           |
+   +----------------------------------------------------------------------+
+ */
 
 #include <main/php.h>
 #include <main/php_main.h>
