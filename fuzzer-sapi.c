@@ -29,6 +29,7 @@
 
 #include "fuzzer.h"
 #include "fuzzer-sapi.h"
+#include "compat.h"
 
 const char HARDCODED_INI[] =
 	"html_errors=0\n"

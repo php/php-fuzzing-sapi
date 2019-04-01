@@ -30,6 +30,7 @@
 #include "fuzzer.h"
 
 #include "fuzzer-sapi.h"
+#include "compat.h"
 
 int fuzzer_do_parse(zend_file_handle *file_handle, char *filename)
 {
