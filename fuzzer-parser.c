@@ -68,14 +68,13 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 	zend_file_handle file_handle;
 	file_handle.filename = "fuzzer.php";
 	file_handle.opened_path = NULL;
-	file_handle.free_filename = 0;
 	file_handle.handle.stream.handle = NULL;
 	file_handle.handle.stream.reader = (zend_stream_reader_t)_php_stream_read;
 	file_handle.handle.stream.fsizer = NULL;
 	file_handle.handle.stream.isatty = 0;
 	file_handle.handle.stream.closer   = NULL;
-	file_handle.handle.stream.mmap.buf = s;
-	file_handle.handle.stream.mmap.len = Size;
+	file_handle.handle.stream.buf = s;
+	file_handle.handle.stream.len = Size;
 
 	//fuzzer_do_parse(&file_handle, "fuzzer.php");
 	fuzzer_do_request(&file_handle, "fuzzer.php");
