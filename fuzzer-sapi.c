@@ -189,7 +189,6 @@ int fuzzer_do_request_f(char *filename)
 	file_handle.filename = filename;
 	file_handle.handle.fp = NULL;
 	file_handle.opened_path = NULL;
-	file_handle.free_filename = 0;
 
 	return fuzzer_do_request(&file_handle, filename);
 }
@@ -199,15 +198,14 @@ int fuzzer_do_request_d(char *filename, char *data, size_t data_len)
 	zend_file_handle file_handle;
 	file_handle.filename = filename;
 	file_handle.opened_path = NULL;
-	file_handle.free_filename = 0;
 	file_handle.handle.stream.handle = NULL;
 	file_handle.handle.stream.reader = (zend_stream_reader_t)_php_stream_read;
 	file_handle.handle.stream.fsizer = NULL;
 	file_handle.handle.stream.isatty = 0;
 	file_handle.handle.stream.closer   = NULL;
-	file_handle.handle.stream.mmap.buf = data;
-	file_handle.handle.stream.mmap.len = data_len;
-	file_handle.type = ZEND_HANDLE_MAPPED;
+	file_handle.buf = data;
+	file_handle.len = data_len;
+	file_handle.type = ZEND_HANDLE_STREAM;
 
 	return fuzzer_do_request(&file_handle, filename);
 }
